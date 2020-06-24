@@ -4,13 +4,14 @@ module ActiveRecord::TypedStore
   class Field
     attr_reader :array, :blank, :name, :default, :type, :null, :accessor, :type_sym
 
-    def initialize(name, type, options={})
+    def initialize(name, type, prefix, options={})
       type_options = options.slice(:scale, :limit, :precision)
       @type = lookup_type(type, type_options)
       @type_sym = type
 
       @accessor = options.fetch(:accessor, true)
       @name = name
+      @name = "#{prefix}_#{name}" if prefix
       if options.key?(:default)
         @default = extract_default(options[:default])
       end

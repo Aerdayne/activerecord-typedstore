@@ -34,8 +34,7 @@ module ActiveRecord::TypedStore
     NO_DEFAULT_GIVEN = Object.new
     [:string, :text, :integer, :float, :time, :datetime, :date, :boolean, :decimal, :any].each do |type|
       define_method(type) do |name, **options|
-        name = "#{@prefix}_#{name}" if @prefix
-        @fields[name] = Field.new(name, type, options)
+        @fields[name] = Field.new(name, type, @prefix, options)
       end
     end
     alias_method :date_time, :datetime
