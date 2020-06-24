@@ -10,6 +10,7 @@ module ActiveRecord::TypedStore
       @coder = options.fetch(:coder) { default_coder(attribute_name) }
       @accessors = options[:accessors]
       @accessors = [] if options[:accessors] == false
+      @prefix = options[:prefix]
       @fields = {}
       yield self
     end
@@ -33,6 +34,7 @@ module ActiveRecord::TypedStore
     NO_DEFAULT_GIVEN = Object.new
     [:string, :text, :integer, :float, :time, :datetime, :date, :boolean, :decimal, :any].each do |type|
       define_method(type) do |name, **options|
+        name = "#{@prefix}_#{name}" if @prefix
         @fields[name] = Field.new(name, type, options)
       end
     end
