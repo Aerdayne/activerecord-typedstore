@@ -51,9 +51,9 @@ module ActiveRecord::TypedStore
           end
         end
 
-        self.local_stored_attributes ||= {}
-        self.local_stored_attributes[store_attribute] ||= []
-        self.local_stored_attributes[store_attribute] |= keys
+        ActiveRecord::Store::ClassMethods.local_stored_attributes ||= {}
+        ActiveRecord::Store::ClassMethods.local_stored_attributes[store_attribute] ||= []
+        ActiveRecord::Store::ClassMethods.local_stored_attributes[store_attribute] |= keys
       end
 
       def _store_accessors_module
