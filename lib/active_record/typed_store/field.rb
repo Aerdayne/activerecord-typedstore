@@ -2,7 +2,7 @@
 
 module ActiveRecord::TypedStore
   class Field
-    attr_reader :array, :blank, :name, :default, :type, :null, :accessor, :type_sym
+    attr_reader :array, :blank, :name, :default, :type, :null, :accessor, :type_sym, :prefix_accessor
 
     def initialize(name, type, prefix, options={})
       type_options = options.slice(:scale, :limit, :precision)
@@ -11,7 +11,7 @@ module ActiveRecord::TypedStore
 
       @accessor = options.fetch(:accessor, true)
       @name = name
-      @name = "#{prefix}_#{name}" if prefix
+      @prefix_accessor = nil || "#{prefix}_#{name}" if prefix
       if options.key?(:default)
         @default = extract_default(options[:default])
       end

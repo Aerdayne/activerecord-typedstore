@@ -26,7 +26,7 @@ module ActiveRecord::TypedStore
       end
       store_accessor(store_attribute, dsl.accessors)
 
-      dsl.accessors.each do |accessor_name|
+      dsl.prefix_accessors.each do |accessor_name|
         define_method("#{accessor_name}_changed?") do
           send("#{store_attribute}_changed?") &&
             send(store_attribute)[accessor_name] != send("#{store_attribute}_was")[accessor_name]

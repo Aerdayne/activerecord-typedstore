@@ -29,6 +29,10 @@ module ActiveRecord::TypedStore
       @accessors || @fields.values.select(&:accessor).map(&:name)
     end
 
+    def prefix_accessors
+      @fields.values.select(&:accessor).map(&:prefix_accessor)
+    end
+
     delegate :keys, to: :@fields
 
     NO_DEFAULT_GIVEN = Object.new
