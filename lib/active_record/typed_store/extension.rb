@@ -25,42 +25,15 @@ module ActiveRecord::TypedStore
         Type.new(typed_klass, dsl.coder, subtype)
       end
 
-      _store_accessors_module.module_eval do
-        dsl.accessors.each do |(accessor_name, prefix_accessor)|
-          prefix_accessor ||= accessor_name
+      dsl.accessors.each do |(accessor_name, prefix_accessor)|
+        prefix_accessor ||= accessor_name
 
-          define_method("#{prefix_accessor}=") do |value|
-            write_store_attribute(store_attribute, accessor_name, value)
-          end
-
-          define_method(prefix_accessor) do
-            read_store_attribute(store_attribute, accessor_name)
-          end
-
-          define_method("#{prefix_accessor}_changed?") do
-            send("#{store_attribute}_changed?") &&
-              send(store_attribute)[accessor_name] != send("#{store_attribute}_was")[accessor_name]
-          end
-
-          define_method("#{prefix_accessor}_was") do
-            send("#{store_attribute}_was")[accessor_name]
-          end
-
-          define_method("restore_#{prefix_accessor}!") do
-            send("#{prefix_accessor}=", send("#{prefix_accessor}_was"))
-          end
+        define_method("#{prefix_accessor}=") do |value|
+          write_store_attribute(store_attribute, accessor_name, value)
         end
 
-        ActiveRecord::Store::ClassMethods.local_stored_attributes ||= {}
-        ActiveRecord::Store::ClassMethods.local_stored_attributes[store_attribute] ||= []
-        ActiveRecord::Store::ClassMethods.local_stored_attributes[store_attribute] |= keys
-      end
-
-      def _store_accessors_module
-        @_store_accessors_module ||= begin
-          mod = Module.new
-          include mod
-          mod
+        define_method(prefix_accessor) do
+          read_store_attribute(store_attribute, accessor_name)
         end
       end
     end
