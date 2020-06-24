@@ -26,11 +26,7 @@ module ActiveRecord::TypedStore
     end
 
     def accessors
-      @accessors || @fields.values.select(&:accessor).map(&:name)
-    end
-
-    def prefix_accessors
-      @fields.values.select(&:accessor).map(&:prefix_accessor)
+      @accessors || @fields.values.select(&:accessor).map { |field| [field.name, field.prefix_accessor.to_sym] }
     end
 
     delegate :keys, to: :@fields

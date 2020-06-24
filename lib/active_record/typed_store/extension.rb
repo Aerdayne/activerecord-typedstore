@@ -24,20 +24,29 @@ module ActiveRecord::TypedStore
       decorate_attribute_type(store_attribute, :typed_store) do |subtype|
         Type.new(typed_klass, dsl.coder, subtype)
       end
-      store_accessor(store_attribute, dsl.accessors)
 
-      dsl.prefix_accessors.each do |accessor_name|
-        define_method("#{accessor_name}_changed?") do
+      dsl.accessors.each do |(accessor_name, prefix_accessor)|
+        prefix_accessor ||= accessor_name
+
+        define_method("#{prefix_accessor}=") do |value|
+          write_store_attribute(store_attribute, accessor_name, value)
+        end
+
+        define_method(prefix_accessor) do
+          read_store_attribute(store_attribute, accessor_name)
+        end
+
+        define_method("#{prefix_accessor}_changed?") do
           send("#{store_attribute}_changed?") &&
             send(store_attribute)[accessor_name] != send("#{store_attribute}_was")[accessor_name]
         end
 
-        define_method("#{accessor_name}_was") do
+        define_method("#{prefix_accessor}_was") do
           send("#{store_attribute}_was")[accessor_name]
         end
 
-        define_method("restore_#{accessor_name}!") do
-          send("#{accessor_name}=", send("#{accessor_name}_was"))
+        define_method("restore_#{prefix_accessor}!") do
+          send("#{prefix_accessor}=", send("#{prefix_accessor}_was"))
         end
       end
     end
